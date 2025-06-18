@@ -15,6 +15,7 @@ import { useDateStore } from "@/store/useDateStore";
 import { usePeriodStore } from "@/store/usePeriodStore";
 import SettingPanel from "@/components/setting/SettingPanel";
 import { useState } from "react";
+import { StockResults } from "@/types/stock";
 
 export default function StockSimulator() {
   const { startDate, endDate } = useDateStore();
@@ -66,7 +67,7 @@ export default function StockSimulator() {
     // 골든크로스/데드크로스 찾기
     const crosses = findGoldenDeadCrosses(shortSMA, longSMA);
 
-    const results = {
+    const results: StockResults = {
       shortSMA,
       longSMA,
       maxProfit,
