@@ -1,6 +1,27 @@
 ## Getting Started
 
-First, run the development server:
+git clone https://github.com/Tnalxmsk/stock-simulator
+
+Open the project in your favorite code editor (VSC, WebStorm, etc.).
+
+Install the dependencies:
+```bash
+npm install
+```
+
+add .env file in the root directory and add your environment variables there.
+```
+NEXT_PUBLIC_API_KEY=6B670IK4TOUISTHL
+NEXT_PUBLIC_PREP_API_KEY=jYtywKy4kFQcbeluxVbshhTmkPviynJ1
+NEXT_PUBLIC_API_URL=https://www.alphavantage.co
+
+```
+
+run the following command
+
+```bash
+
+run the development server:
 
 ```bash
 npm run dev
@@ -14,9 +35,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production URL
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can use the following URL to access the production version of the application:
+https://stock-simulator-two.vercel.app/
 
 ## .ENV
 This project uses environment variables to manage configuration. Create a `.env.local` file in the root directory and add your environment variables there. For example:
@@ -27,8 +49,3 @@ NEXT_PUBLIC_PREP_API_KEY=jYtywKy4kFQcbeluxVbshhTmkPviynJ1
 NEXT_PUBLIC_API_URL=https://www.alphavantage.co
 
 ```
-
-## Production URL
-
-You can use the following URL to access the production version of the application:
-https://stock-simulator-two.vercel.app/
