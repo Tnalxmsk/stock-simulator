@@ -1,23 +1,26 @@
-// SMA by sliding window
-export const calculateSMA = (
+// 슬라이딩 윈도우 + Queue 기반 SMA 계산
+export const calculateSMA_Optimized = (
   prices: number[],
   period: number,
 ): (number | null)[] => {
-  const sma: (number | null)[] = [];
+  const result: (number | null)[] = [];
+  const window: number[] = []; // 슬라이딩 윈도우를 위한 배열
+  let sum = 0;
 
   for (let i = 0; i < prices.length; i++) {
-    if (i < period - 1) {
-      sma.push(null);
-    } else {
-      let sum = 0;
-      for (let j = i - period + 1; j <= i; j++) {
-        sum += prices[j];
-      }
-      sma.push(sum / period);
+    window.push(prices[i]);
+    sum += prices[i];
+
+    if (window.length > period) {
+      sum -= window.shift()!;
     }
+
+    result.push(window.length === period ? sum / period : null);
   }
-  return sma;
+
+  return result;
 };
+
 
 // 최대 수익 1회 매매 찾기 by Greedy Algorithm
 export const findMaxProfitGreedy = (prices: number[]) => {
@@ -54,131 +57,89 @@ export const findMaxProfitGreedy = (prices: number[]) => {
   };
 };
 
-// 날짜로 인덱스 찾기 by Binary Search
-export const binarySearchByDate = (
-  dates: string[],
-  targetDate: string,
-): number => {
-  let left = 0;
-  let right = dates.length - 1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const midDate = dates[mid];
-
-    if (midDate === targetDate) {
-      return mid;
-    } else if (midDate < targetDate) {
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
-  }
-
-  return -1; // 찾지 못했을 경우
+// V자형 패턴 탐지 by Peek/Valley 기반 탐색
+export const detectVPatternsHybrid = (
+  prices: number[],
+): number[] => {
+  const candidates = quicValleyCandidates(prices);
+  return confirmVPatternWithDeque(prices, candidates);
 };
 
-// V자형 패턴 탐지 by KMP Algorithm
-export const kmpPatternSearch = (
-  prices: number[],
-  pattern: number[],
-): number[] => {
-  // 최소 5일 이상의 데이터 필요
-  if (prices.length < 5) return [];
+// Peek/Valley 기반 후보 탐색
+const quicValleyCandidates = (prices: number[]): number[] => {
+  const candidates: number[] = [];
+  for (let i = 2; i < prices.length - 2; i++) {
+    if (
+      prices[i - 2] > prices[i - 1] &&
+      prices[i - 1] > prices[i] &&
+      prices[i + 1] > prices[i] &&
+      prices[i + 2] > prices[i]
+    ) {
+      candidates.push(i);
+    }
+  }
+  return candidates;
+};
 
-  const matches: number[] = [];
-  const minPatternLength = 5;
+// 슬라이싱 대신 Deque(윈도우 배열)로 성능 개선 + 자료구조 활용
+const confirmVPatternWithDeque = (prices: number[], indices: number[]): number[] => {
+  const result: number[] = [];
+  const window: number[] = new Array(5);
 
-  for (let i = 0; i <= prices.length - minPatternLength; i++) {
-    if (isVPattern(prices.slice(i, i + minPatternLength))) {
-      matches.push(i);
+  for (const i of indices) {
+    if (i - 2 < 0 || i + 2 >= prices.length) continue;
+
+    // 슬라이딩 윈도우 수동 구성 (자료구조로 명시적 관리)
+    for (let offset = -2; offset <= 2; offset++) {
+      window[offset + 2] = prices[i + offset];
+    }
+
+    if (isVPattern(window)) {
+      result.push(i);
     }
   }
 
-  return matches;
+  return result;
 };
 
 // V자 패턴 판별 함수
 const isVPattern = (segment: number[]): boolean => {
-  if (segment.length < 5) return false;
-
-  const changes = []
+  const changes: number[] = [];
   for (let i = 1; i < segment.length; i++) {
     changes.push((segment[i] - segment[i - 1]) / segment[i - 1]);
   }
 
-  // V자 패턴 조건
-  // 처음 2일은 하락 (-2% 이상), 마지막 2일은 상승 (+2% 이상)
-  // 중간에 바닥점이 있음
-
   const firstHalf = changes.slice(0, 2);
   const secondHalf = changes.slice(-2);
 
-  // 1% 이상 하락
   const isDeclineFirst = firstHalf.every((change) => change < -0.01);
-  // 1% 이상 상승
   const isRiseSecond = secondHalf.every((change) => change > 0.01);
 
   return isDeclineFirst && isRiseSecond;
-}
-
-// KMP 전처리: Longest Proper Prefix which is also Suffix
-function computeLPS(pattern: number[]): number[] {
-  const lps = new Array(pattern.length).fill(0)
-  let len = 0
-  let i = 1
-
-  while (i < pattern.length) {
-    if (Math.abs(pattern[i] - pattern[len]) < 0.1) {
-      len++
-      lps[i] = len
-      i++
-    } else {
-      if (len !== 0) {
-        len = lps[len - 1]
-      } else {
-        lps[i] = 0
-        i++
-      }
-    }
-  }
-
-  return lps
-}
-
-// 배열 정규화 함수
-function normalizeArray(arr: number[]): number[] {
-  const min = Math.min(...arr)
-  const max = Math.max(...arr)
-  const range = max - min
-
-  if (range === 0) return arr.map(() => 0)
-
-  return arr.map((val) => (val - min) / range)
-}
+};
 
 // 골든크로스/데드크로스 찾기
 export function findGoldenDeadCrosses(shortSMA: (number | null)[], longSMA: (number | null)[]) {
-  const crosses: Array<{ type: "golden" | "dead"; index: number }> = []
+  const crosses: Array<{ type: "golden" | "dead"; index: number }> = [];
 
   for (let i = 1; i < shortSMA.length; i++) {
-    const prevShort = shortSMA[i - 1]
-    const currShort = shortSMA[i]
-    const prevLong = longSMA[i - 1]
-    const currLong = longSMA[i]
+    const prevShort = shortSMA[i - 1];
+    const currShort = shortSMA[i];
+    const prevLong = longSMA[i - 1];
+    const currLong = longSMA[i];
 
     // 모든 값이 존재하는지 확인
     if (prevShort !== null && currShort !== null && prevLong !== null && currLong !== null) {
       // 골든크로스: 단기선이 장기선을 아래에서 위로 돌파
       if (prevShort <= prevLong && currShort > currLong) {
-        crosses.push({ type: "golden", index: i })
+        crosses.push({ type: "golden", index: i });
       }
       // 데드크로스: 단기선이 장기선을 위에서 아래로 돌파
       else if (prevShort >= prevLong && currShort < currLong) {
-        crosses.push({ type: "dead", index: i })
+        crosses.push({ type: "dead", index: i });
       }
     }
   }
 
-  return crosses
+  return crosses;
 }
