@@ -170,6 +170,22 @@ const SimpleChart = ({ data, simulationResults, shortPeriod, longPeriod }: Simpl
       ctx.stroke()
     }
 
+    if (simulationResults?.disparitySignals) {
+      simulationResults.disparitySignals.forEach((signal: any) => {
+        const x = getX(signal.index)
+        const y = getY(signal.price)
+
+        ctx.fillStyle = signal.status === "overbought" ? "#f87171" : "#60a5fa" // 빨강 or 파랑
+        ctx.beginPath()
+        ctx.arc(x, y, 5, 0, 2 * Math.PI)
+        ctx.fill()
+
+        ctx.strokeStyle = "#ffffff"
+        ctx.lineWidth = 2
+        ctx.stroke()
+      })
+    }
+
     // Y축 라벨 그리기
     ctx.fillStyle = "#666666"
     ctx.font = "12px sans-serif"

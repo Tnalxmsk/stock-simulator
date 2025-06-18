@@ -4,7 +4,7 @@ import {
   findMaxProfitGreedy,
   detectVPatternsHybrid,
   findGoldenDeadCrosses,
-  calculateSMA_Optimized,
+  calculateSMA_Optimized, detectDisparitySignals,
 } from "@/lib/algorithms";
 import { useStockData, useFilteredStockData } from "@/hooks/use-stock-data";
 import { useSimulationSetting } from "@/hooks/useSimulationSetting";
@@ -60,6 +60,9 @@ export default function StockSimulator() {
     // SMA 계산 (슬라이딩 윈도우)
     const shortSMA = calculateSMA_Optimized(prices, shortPeriod);
     const longSMA = calculateSMA_Optimized(prices, longPeriod);
+    // 이격도 기반 과열/과매도 탐지
+    const disparitySignals = detectDisparitySignals(prices, shortSMA);
+
 
     // Greedy 알고리즘: 최대 수익 구간
     const maxProfit = findMaxProfitGreedy(prices);
@@ -89,6 +92,7 @@ export default function StockSimulator() {
       },
       // 추가 분석 데이터
       rawData: dataForSimulation,
+      disparitySignals,
       prices,
       dates,
     };

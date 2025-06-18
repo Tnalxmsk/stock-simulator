@@ -172,6 +172,11 @@ const CandleStickChart = ({ data, simulationResults, longPeriod, shortPeriod }: 
           <Target className="w-4 h-4 text-blue-600" />
           <span>최대 수익 구간</span>
         </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-red-300 rounded-full"></div>
+          <div className="w-3 h-3 bg-blue-300 rounded-full"></div>
+          <span>과열 / 과매도</span>
+        </div>
       </div>
 
       {/* 캔들스틱 차트 설명 */}

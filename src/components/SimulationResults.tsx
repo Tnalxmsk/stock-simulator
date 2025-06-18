@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Target, DollarSign, Clock, CalendarRange } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, DollarSign, Clock, CalendarRange, AlertTriangle } from "lucide-react";
 
 interface SimulationResultsProps {
   results: any;
@@ -202,6 +202,46 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
             )}
           </CardContent>
         </Card>
+
+        {/* 이격도 과열/과매도 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              이격도 분석
+            </CardTitle>
+            <CardDescription>
+              SMA 기준으로 주가가 ±5% 이상 벗어난 시점을 탐지합니다
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {results.disparitySignals && results.disparitySignals.length > 0 ? (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {results.disparitySignals.map((signal: any, i: number) => (
+                  <div
+                    key={i}
+                    className={`flex justify-between items-center p-2 rounded-lg ${
+                      signal.status === "overbought" ? "bg-red-50" : "bg-blue-50"
+                    }`}
+                  >
+                    <div className="flex flex-col">
+              <span className="text-sm font-medium">
+                {signal.status === "overbought" ? "🔥 과열" : "❄️ 과매도"}
+              </span>
+                      <span className="text-xs text-gray-500">
+                Index: {signal.index} / Disparity: {signal.disparity.toFixed(2)}%
+              </span>
+                    </div>
+                    <span className="text-sm text-gray-700 font-mono">${signal.price.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">과열/과매도 시그널이 없습니다</p>
+            )}
+          </CardContent>
+        </Card>
+
 
         {/* KMP 패턴 매칭 */}
         <Card>

@@ -1,3 +1,5 @@
+import { DisparitySignal } from "@/lib/algorithms";
+
 export interface StockDataPoint {
   date: string;
   close: number;
@@ -74,6 +76,7 @@ export interface StockResults {
     }
   };
   rawData: StockDataPoint[];
+  disparitySignals: DisparitySignal[]
   prices: number[];
   dates: string[];
 }

@@ -143,3 +143,35 @@ export function findGoldenDeadCrosses(shortSMA: (number | null)[], longSMA: (num
 
   return crosses;
 }
+
+export interface DisparitySignal {
+  index: number;
+  price: number;
+  sma: number;
+  disparity: number;
+  status: "normal" | "overbought" | "oversold";
+}
+
+export const detectDisparitySignals = (
+  prices: number[],
+  sma: (number | null)[],
+  threshold = 5,
+): DisparitySignal[] => {
+  const result: DisparitySignal[] = [];
+  for (let i = 0; i < prices.length; i++) {
+    const ma = sma[i];
+    if (ma === null) continue;
+
+    const diff = ((prices[i] - ma) / ma) * 100;
+    if (Math.abs(diff) < threshold) continue;
+
+    result.push({
+      index: i,
+      price: prices[i],
+      sma: ma,
+      disparity: diff,
+      status: diff > 0 ? "overbought" : "oversold",
+    })
+  }
+  return result;
+};

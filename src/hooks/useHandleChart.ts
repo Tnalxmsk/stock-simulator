@@ -5,7 +5,7 @@ export const drawChart = (
   canvasRef: RefObject<HTMLCanvasElement | null>,
   volumeCanvasRef: RefObject<HTMLCanvasElement | null>,
   data: StockDataPoint[],
-  simulationResults
+  simulationResults,
 ) => {
   const canvas = canvasRef.current;
   const volumeCanvas = volumeCanvasRef.current;
@@ -217,6 +217,24 @@ export const drawChart = (
     ctx.lineWidth = 2;
     ctx.stroke();
   }
+
+  // 과열/과매도 시그널 표시
+  if (simulationResults?.disparitySignals) {
+    simulationResults.disparitySignals.forEach((signal) => {
+      const x = getX(signal.index);
+      const y = getY(signal.price);
+
+      ctx.fillStyle = signal.status === "overbought" ? "#f87171" : "#60a5fa"; // 빨강, 파랑
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+  }
+
 
   // Y축 라벨 (가격)
   ctx.fillStyle = "#666666";

@@ -213,6 +213,46 @@ const ChartAnalysis = ({ data, simulationResults, shortPeriod, longPeriod, stock
           </CardContent>
         </Card>
       )}
+      {simulationResults?.disparitySignals && simulationResults?.disparitySignals.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              이격도 기반 과열/과매도 시점
+            </CardTitle>
+            <CardDescription>단기 SMA 기준 ±5% 이상 이격된 시점을 표시합니다</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+              {simulationResults.disparitySignals.map((signal: any, i: number) => (
+                <div
+                  key={i}
+                  className={`flex justify-between items-center p-3 rounded-lg ${
+                    signal.status === "overbought" ? "bg-red-50" : "bg-blue-50"
+                  }`}
+                >
+                  <div className="flex flex-col">
+              <span
+                className={`text-sm font-semibold ${
+                  signal.status === "overbought" ? "text-red-600" : "text-blue-600"
+                }`}
+              >
+                {signal.status === "overbought" ? "🔥 과열" : "❄️ 과매도"}
+              </span>
+                    <span className="text-xs text-gray-500">
+                Index: {signal.index} / 가격: ${signal.price.toFixed(2)}
+              </span>
+                  </div>
+                  <div className="text-sm text-gray-700 font-mono">
+                    {signal.disparity.toFixed(2)}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
 
       {/* 투자 주의사항 */}
       <Card className="border-yellow-200 bg-yellow-50">
