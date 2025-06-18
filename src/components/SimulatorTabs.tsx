@@ -2,12 +2,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChartAnalysis from "@/components/ChartAnalysis";
 import SimulationResults from "@/components/SimulationResults";
 import TermsGuide from "@/components/TermsGuide";
-import { StockDataPoint, StockDataResponse } from "@/types/stock";
+import { StockDataPoint, StockDataResponse, StockResults } from "@/types/stock";
 
 interface SimulatorTabsProps {
   displayData: StockDataResponse | undefined;
   displayFilteredData: StockDataPoint[];
-  simulationResults: any;
+  simulationResults: StockResults;
   shortPeriod: number;
   longPeriod: number;
 }

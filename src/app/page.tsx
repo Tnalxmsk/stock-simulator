@@ -117,7 +117,7 @@ export default function StockSimulator() {
         />
         {/* 시뮬레이션 탭 */}
         <SimulatorTabs
-          simulationResults={simulationResults}
+          simulationResults={simulationResults!}
           displayData={stockData}
           displayFilteredData={displayFilteredData}
           longPeriod={longPeriod}
