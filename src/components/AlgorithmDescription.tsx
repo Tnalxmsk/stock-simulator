@@ -15,27 +15,27 @@ const AlgorithmDescription = () => {
             </p>
           </div>
           <div className="p-4 border rounded-lg">
-            <h3 className="font-semibold text-blue-600 mb-2">2. Binary Search 알고리즘</h3>
+            <h3 className="font-semibold text-yellow-600 mb-2">2. Greedy 알고리즘</h3>
             <p className="text-sm text-gray-600">
-              사용자가 선택한 날짜의 인덱스를 빠르게 찾습니다.
+              단 한 번의 매수와 매도를 통해 최대 수익을 얻을 수 있는 최적의 타이밍을 탐색합니다.
             </p>
           </div>
           <div className="p-4 border rounded-lg">
-            <h3 className="font-semibold text-purple-600 mb-2">3. 실시간 API 데이터</h3>
+            <h3 className="font-semibold text-orange-600 mb-2">3. Peek/Valley 기반 탐색</h3>
             <p className="text-sm text-gray-600">
-              여러 API를 통해 실제 주식 시장 데이터를 가져와 분석합니다. API 실패 시 시뮬레이션 데이터를 사용합니다.
+              주가가 하락 후 반등하는 V자형 패턴을 효율적으로 탐색하고 변화율 기반으로 정밀 검증합니다.
             </p>
           </div>
           <div className="p-4 border rounded-lg">
-            <h3 className="font-semibold text-orange-600 mb-2">4. Peek/Valley 기반 탐색</h3>
+            <h3 className="font-semibold text-blue-600 mb-2">4. 골든/데드크로스 탐지</h3>
             <p className="text-sm text-gray-600">
-              V자형 반등 패턴과 같은 특정 주가 패턴이 선택한 기간에 존재하는지 효율적으로 탐지합니다.
+              단기 이동 평균선이 장기 이동 평균선을 돌파하는 시점을 탐지하여 매수/매도 신호를 제공합니다.
             </p>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default AlgorithmDescription;
