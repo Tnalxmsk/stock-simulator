@@ -1,23 +1,57 @@
-// 슬라이딩 윈도우 + Queue 기반 SMA 계산
+class CircularQueue {
+  private buffer: number[];
+  private head = 0;    // 다음 dequeue 위치
+  private size = 0;    // 현재 버퍼에 든 요소 개수
+  constructor(private capacity: number) {
+    this.buffer = new Array(capacity);
+  }
+
+  enqueue(x: number) {
+    const tail = (this.head + this.size) % this.capacity;
+    this.buffer[tail] = x;
+    if (this.size < this.capacity) {
+      this.size++;
+    } else {
+      // capacity 초과 시 head 가리키는 값을 자동으로 덮어쓰며 dequeue
+      this.head = (this.head + 1) % this.capacity;
+    }
+  }
+
+  dequeue(): number {
+    if (this.size === 0) throw new Error('Empty');
+    const val = this.buffer[this.head];
+    this.head = (this.head + 1) % this.capacity;
+    this.size--;
+    return val;
+  }
+
+  isFull() {
+    return this.size === this.capacity;
+  }
+
+  isEmpty() {
+    return this.size === 0;
+  }
+}
+
+// 슬라이딩 윈도우 + CircularQueue 기반 SMA 계산
 export const calculateSMA_Optimized = (
   prices: number[],
   period: number,
 ): (number | null)[] => {
   const result: (number | null)[] = [];
-  const window: number[] = []; // 슬라이딩 윈도우를 위한 배열
+  const queue = new CircularQueue(period);
   let sum = 0;
 
   for (let i = 0; i < prices.length; i++) {
-    window.push(prices[i]);
+    if (queue.isFull()) {
+      sum -= queue.dequeue();
+    }
+    queue.enqueue(prices[i]);
     sum += prices[i];
 
-    if (window.length > period) {
-      sum -= window.shift()!;
-    }
-
-    result.push(window.length === period ? sum / period : null);
+    result.push(queue.isFull() ? sum / period : null);
   }
-
   return result;
 };
 
@@ -152,6 +186,7 @@ export interface DisparitySignal {
   status: "normal" | "overbought" | "oversold";
 }
 
+// 이격도 기반 과열/과매도 탐지
 export const detectDisparitySignals = (
   prices: number[],
   sma: (number | null)[],
@@ -171,7 +206,7 @@ export const detectDisparitySignals = (
       sma: ma,
       disparity: diff,
       status: diff > 0 ? "overbought" : "oversold",
-    })
+    });
   }
   return result;
 };
